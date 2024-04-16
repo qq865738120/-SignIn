@@ -2,6 +2,7 @@
 
 const Hapi = require('@hapi/hapi');
 const request = require("request-promise");
+// const request = require("request");
 const options = require('./jike');
 
 const init = async () => {
@@ -15,12 +16,22 @@ const init = async () => {
         method: 'GET',
         path: '/jike/signIn',
         handler: async (req, h) => {
-            options.options.headers.Authorization = 'Bearer ' + req.query.token;
-            const res = await request(options.options);
-            console.log('res===',JSON.parse(res));
+
+            function callback(error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    console.log('zzz', body);
+                } else {
+                    console.log('cccc', body);
+                }
+            }
+
+            const res = await request(options.getOptions(req.query.token));
+            // request(options.getOptions(req.query.token), callback);
+            console.log('===res===', JSON.parse(res));
             return JSON.parse(res);
         }
     });
+
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

@@ -14,7 +14,7 @@ const init = async () => {
     server.route({
         method: 'GET',
         path: '/jike/signIn',
-        handler: (req, h) => {
+        handler: async (req, h) => {
             options.options.headers.Authorization = 'Bearer ' + req.query.token;
             const res = await request(options.options);
             return res;

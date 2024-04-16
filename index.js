@@ -47,3 +47,12 @@ process.on('unhandledRejection', (err) => {
 });
 
 init();
+
+
+
+var CryptoJS = require("crypto-js");
+let t = 6666 + "_salt";
+for (let index = 0; index < 6; index++) {
+    t = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(t))
+}
+console.log('=== cccccvvv===', t);

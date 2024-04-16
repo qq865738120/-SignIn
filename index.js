@@ -1,7 +1,7 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
-const request = require("request");
+const request = require("request-promise");
 const options = require('./jike');
 
 const init = async () => {
@@ -15,28 +15,9 @@ const init = async () => {
         method: 'GET',
         path: '/jike/signIn',
         handler: (req, h) => {
-
-            const user = {
-                firstName: 'John',
-                lastName: 'Doe',
-                userName: 'JohnDoe',
-                id: 123
-            }
-
-            // console.log('====',req.query.token);
-
-            function callback(error, response, body) {
-                if (!error && response.statusCode == 200) {
-                  console.log(body);
-                } else {
-                  console.log("===error===");
-                  console.log(body);
-                }
-            }
-
             options.options.headers.Authorization = 'Bearer ' + req.query.token;
-            request(options.options, callback);
-            return user;
+            const res = await request(options.options);
+            return res;
         }
     });
 

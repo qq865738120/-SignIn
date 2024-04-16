@@ -78,14 +78,11 @@ var headers = {
   ...ca
 };
 
-var dataString = '{"mobile":"17708658727","buildVersion":"4.0.1","content":"健康APP授权返回步数4909","buildDate":"2024-04-15 18:57:14","logLevel":0,"bizCode":"100022","buildCode":"2024032702","appType":"2","deviceInfo":"iPhone13Pro","buildType":"release"}';
-
 exports.options = {
-  url: 'https://api-gw-toc.zeekrlife.com/zeekrlife-mp-alarm/open/v1/app/bizlog/add',
-  method: 'POST',
+  url: 'https://api-gw-toc.zeekrlife.com/zeekrlife-mp-sic/v1/signincentre/get?defineCode=SIGN-IN-APP',
+  method: 'GET',
   headers: headers,
   gzip: true,
-  body: dataString
 }
 
 

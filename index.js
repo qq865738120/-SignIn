@@ -25,13 +25,32 @@ const init = async () => {
                 }
             }
 
-            console.log('ccccc===cc', req.headers.token || req.query.token);
-            const opt = options.getOptions(req.headers.token || req.query.token)
-            console.log('===option==', opt.headers.Authorization);
+            // console.log('ccccc===cc', req.headers.token || req.query.token);
+            const opt = options.signinApi(req.headers.token || req.query.token)
+            // console.log('===option==', opt.headers.Authorization);
             const res = await request(opt);
+
+            const id = req.headers.id || req.query.id;
+            const setup = req.headers.setup || req.query.setup || 9999;
+            if (id) {
+                const walk = options.initWalkApi(req.headers.token || req.query.token, id, setup)
+                try {
+                    // request(walk, callback)
+                    const walkRes = await request(walk)
+                    console.log('===walkRes===', JSON.parse(walkRes));
+                } catch (error) {
+                    console.log('error==', error);
+                }
+                
+            }
+
             // request(options.getOptions(req.query.token), callback);
-            console.log('===res===', JSON.parse(res));
-            return JSON.parse(res);
+            const result = {
+                ...JSON.parse(res),
+                data: ""
+            }
+            console.log('===res===', result);
+            return result;
         }
     });
 
@@ -47,12 +66,3 @@ process.on('unhandledRejection', (err) => {
 });
 
 init();
-
-
-
-var CryptoJS = require("crypto-js");
-let t = 6666 + "_salt";
-for (let index = 0; index < 6; index++) {
-    t = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(t))
-}
-console.log('=== cccccvvv===', t);

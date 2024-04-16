@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+var CryptoJS = require("crypto-js");
 
 // ot = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz1234567890"
 function pt(e) {
@@ -47,13 +48,35 @@ function main() {
     }
 }
 
-function getOptions(token) {
+function getOptions(token, url, method, headers, body) {
   const ca = main();
   return {
-    url: 'https://api-gw-toc.zeekrlife.com/zeekrlife-mp-sic/v1/signincentre/get?defineCode=SIGN-IN-APP',
-    method: 'GET',
+    url,
+    method,
     gzip: true,
     headers: {
+      ...headers,
+      ...ca,
+      'Authorization': 'Bearer ' + token,
+    },
+    body
+  }
+}
+
+function getWalkSecret(setup) {
+  let t = setup + "_salt";
+  for (let index = 0; index < 6; index++) {
+      t = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(t))
+  }
+  return t;
+}
+
+function signinApi(token) {
+  return getOptions(
+    token,
+    'https://api-gw-toc.zeekrlife.com/zeekrlife-mp-sic/v1/signincentre/get?defineCode=SIGN-IN-APP',
+    'GET',
+    {
       'Host': 'api-gw-toc.zeekrlife.com',
       'User-Agent': 'ZeekrLife/4.0.1 (iPhone; iOS 17.4.1; Scale/3.00)0725347432775059414785460333450504352503170354470887554110883965',
       'x_ca_sign': 'f536fefa69b08abc4820a0271389f922432f471b',
@@ -68,17 +91,58 @@ function getOptions(token) {
       'request-original': 'zeekr-app',
       'WorkspaceId': 'prod',
       'Connection': 'keep-alive',
-      'Authorization': 'Bearer ' + token,
       'Accept-Language': 'zh-Hans-CN;q=1',
       'app_type': 'IOS',
       'phone_model': 'iPhone13Pro',
       'x_ca_secret': 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCz09z6e9WOcNq+nUMX8Vq1Xe2EmJxuR3XbtureDCS90dfkok',
       'Accept': '*/*',
-      'Accept-Encoding': 'gzip, deflate, br',
-      ...ca
-    }
-  }
+      'Accept-Encoding': 'gzip, deflate, br'
+    },
+    ''
+  )
 }
 
-exports.getOptions = getOptions
+function initWalkApi(token, id, setup) {
+  const secret = getWalkSecret(setup)
+  console.log('ccccccc', id, setup, secret);
+  return getOptions(
+    token,
+    'https://api-gw-toc.zeekrlife.com/zeekrlife-mp-val/v1/walkData/initDayWalkData',
+    'POST',
+    {
+      'Host': 'api-gw-toc.zeekrlife.com',
+      'AppId': 'ONEX97FB91F061405',
+      'Referer': 'https://activity-h5.zeekrlife.com/',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/21E236 ChannelId(3) NebulaSDK/1.8.100112 Nebula zeekr_iOS_v4.0.1 WK PSDType(1) mPaaSClient/2024032702',
+      'x_ca_sign': '284ff0f6ce08585675d3cae7520e2129a9e06aee',
+      'X-CORS-ONEX97FB91F061405-prod': '1',
+      'app_code': 'toc_h5_green_zeekrapp',
+      'device_id': '99268563627549031969',
+      'Origin': 'https://activity-h5.zeekrlife.com',
+      'x_ca_nonce': 'EijAYFsi55DEy5K',
+      'Sec-Fetch-Dest': 'empty',
+      'x_ca_timestamp': '1713283637099',
+      'x_ca_key': 'H5-SIGN-SECRET-KEY',
+      'Sec-Fetch-Site': 'same-site',
+      'Version': '2',
+      'WorkspaceId': 'prod',
+      'Content-Length': '151',
+      'Connection': 'keep-alive',
+      'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
+      'app_type': 'h5',
+      'x_gray_code': 'gray45',
+      'riskTimeStamp': '1713283637099',
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Sec-Fetch-Mode': 'cors'
+  },
+    `{"accountId":"${id}","stepCountsSecret":"${secret}","stepCounts":${setup},"sourceType":20}`
+  )
+}
+
+
+
+exports.signinApi = signinApi;
+exports.initWalkApi = initWalkApi;
 

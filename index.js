@@ -26,9 +26,9 @@ const init = async () => {
             }
 
             console.log('=req.query.token=', req.query.token);
-            const option = options.getOptions(opt)
-            console.log('===option==', option.headers.Authorization);
-            const res = await request(option);
+            const opt = options.getOptions(req.query.token)
+            console.log('===option==', opt.headers.Authorization);
+            const res = await request(opt);
             // request(options.getOptions(req.query.token), callback);
             console.log('===res===', JSON.parse(res));
             return JSON.parse(res);

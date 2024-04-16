@@ -17,7 +17,8 @@ const init = async () => {
         handler: async (req, h) => {
             options.options.headers.Authorization = 'Bearer ' + req.query.token;
             const res = await request(options.options);
-            return res;
+            console.log('res===',res);
+            return { code: '000009' };
         }
     });
 

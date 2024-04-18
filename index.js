@@ -17,34 +17,18 @@ const init = async () => {
         path: '/jike/signIn',
         handler: async (req, h) => {
 
-            function callback(error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    console.log('zzz', body);
-                } else {
-                    console.log('cccc', body);
-                }
-            }
-
-            // console.log('ccccc===cc', req.headers.token || req.query.token);
             const opt = options.signinApi(req.headers.token || req.query.token)
-            // console.log('===option==', opt.headers.Authorization);
             const res = await request(opt);
 
-            const id = req.headers.id || req.query.id;
-            const setup = req.headers.setup || req.query.setup || 9999;
-            if (id) {
-                const walk = options.initWalkApi(req.headers.token || req.query.token, id, setup)
-                try {
-                    // request(walk, callback)
-                    const walkRes = await request(walk)
-                    console.log('===walkRes===', JSON.parse(walkRes));
-                } catch (error) {
-                    console.log('error==', error);
-                }
-                
-            }
+            const id = req.headers.id || req.query.id || '1780549096419627010';
+            const share = options.docShare(req.headers.token || req.query.token, id)
+            request(share)
+            // console.log('===shareRes===', JSON.parse(shareRes));
 
-            // request(options.getOptions(req.query.token), callback);
+            const article = options.getArticle(req.headers.token || req.query.token, id)
+            request(article)
+            // console.log('===articleRes===', JSON.parse(articleRes));
+
             const result = {
                 ...JSON.parse(res),
                 data: ""

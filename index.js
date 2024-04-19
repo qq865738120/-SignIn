@@ -16,6 +16,7 @@ const init = async () => {
         method: 'GET',
         path: '/jike/signIn',
         handler: async (req, h) => {
+            console.log('====token====', req.headers.token || req.query.token);
 
             const opt = options.signinApi(req.headers.token || req.query.token)
             const res = await request(opt);

@@ -144,7 +144,7 @@ function initWalkApi(token, id, setup) {
 function getArticleList(token) {
   return getOptions(
     token,
-    'https://api-gw-toc.zeekrlife.com/zeekrlife-bbs-theme/v1/invitation/pub/squareList?followStatus=2&pageNo=1&pageSize=20',
+    'https://api-gw-toc.zeekrlife.com/zeekrlife-bbs-theme/v1/invitation/pub/squareList?followStatus=0&pageNo=1&pageSize=20',
     'GET',
     {
       'Host': 'api-gw-toc.zeekrlife.com',

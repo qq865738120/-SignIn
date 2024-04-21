@@ -8,7 +8,7 @@ const options = require('./jike');
 const init = async () => {
 
     const server = Hapi.server({
-        port: 36663,
+        port: 3030,
         host: '0.0.0.0'
     });
 
@@ -16,19 +16,27 @@ const init = async () => {
         method: 'GET',
         path: '/jike/signIn',
         handler: async (req, h) => {
-            console.log('====token====', req.headers.token || req.query.token);
+            const token = req.headers.token || req.query.token
+            console.log('====token====', token);
 
-            const opt = options.signinApi(req.headers.token || req.query.token)
+            const opt = options.signinApi(token)
             const res = await request(opt);
 
-            const id = req.headers.id || req.query.id || '1780549096419627010';
-            const share = options.docShare(req.headers.token || req.query.token, id)
-            request(share)
-            // console.log('===shareRes===', JSON.parse(shareRes));
 
-            const article = options.getArticle(req.headers.token || req.query.token, id)
-            request(article)
-            // console.log('===articleRes===', JSON.parse(articleRes));
+            const articleList = options.getArticleList(token)
+            const articelListRes = await request(articleList)
+            // console.log('====articelListRes==', articelListRes);
+
+            if (articelListRes && JSON.parse(articelListRes) && JSON.parse(articelListRes).data) {
+                const list = JSON.parse(articelListRes).data.list;
+                const share = options.docShare(token, list[0].id)
+                const shareRes = await request(share)
+                console.log('===shareRes===', JSON.parse(shareRes), list[0].id);
+
+                const article = options.getArticle(token, list[0].id)
+                const articleRes = await request(article)
+                // console.log('===articleRes===', JSON.parse(articleRes));
+            }
 
             const result = {
                 ...JSON.parse(res),
